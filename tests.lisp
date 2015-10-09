@@ -2,7 +2,7 @@
 
 (defun delta (x y)
   (declare (type complex-sample-array x y))
-  (let ((max-diff 0d0))
+  (let ((max-diff 0.0))
     (declare (type double-float max-diff))
     (if (= (length x) (length y))
         (map nil (lambda (x y)
@@ -29,7 +29,7 @@
       (funcall fun vec 0 twiddle))))
 
 (defun make-scaled-inv (n scale)
-  (let ((twiddle (make-twiddle n -1d0))
+  (let ((twiddle (make-twiddle n -1.0))
         (fun     (compile
                   nil
                   `(lambda (vec start twiddle)
@@ -48,7 +48,7 @@
            :forward t
            :scale (cond ((= scale 1)
                          nil)
-                        ((= scale (/ 1d0 n))
+                        ((= scale (/ 1.0 n))
                          :inv)
                         (t :sqrt))
            :in-order *fancy-in-order*))
@@ -58,17 +58,17 @@
            :forward nil
            :scale (cond ((= scale 1)
                          nil)
-                        ((= scale (/ 1d0 n))
+                        ((= scale (/ 1.0 n))
                          :inv)
                         (t :sqrt))
            :in-order *fancy-in-order*))
 
-(defun test-pairs (n &key (fwd-scale 1d0)
+(defun test-pairs (n &key (fwd-scale 1.0)
                        (fwd 'make-scaled-fwd)
                        (inv 'make-scaled-inv))
   (assert (power-of-two-p n))
   (let* ((fwd (funcall fwd n fwd-scale))
-         (inv (funcall inv n (/ 1d0 n fwd-scale)))
+         (inv (funcall inv n (/ 1.0 n fwd-scale)))
          (iota (random-vector n))
          (copy (copy-seq iota)))
     (funcall fwd copy)
@@ -89,7 +89,7 @@
         do (format t "~A: ~A~%" i
                    (/ (test-pairs
                        (ash 1 i)
-                       :fwd-scale (/ (sqrt (float (ash 1 i) 1d0)))
+                       :fwd-scale (/ (sqrt (float (ash 1 i) 1.0)))
                        :fwd fwd
                        :inv inv)
                       (max i 1))))
@@ -98,7 +98,7 @@
         do (format t "~A: ~A~%" i
                    (/ (test-pairs
                        (ash 1 i)
-                       :fwd-scale (/ (float (ash 1 i) 1d0))
+                       :fwd-scale (/ (float (ash 1 i) 1.0))
                        :fwd fwd
                        :inv inv)
                       (max i 1)))))
@@ -106,7 +106,7 @@
 (defun make-dummy-window (n)
   (map-into (make-array n :element-type 'double-float)
             (lambda ()
-              (+ (random 1d0) 1d0))))
+              (+ (random 1.0) 1.0))))
 
 (defun apply-window-inv (vec window)
   (declare (type complex-sample-array vec)
@@ -122,7 +122,7 @@
                                         window)
                                   (type index start window-start))
                          twiddle window window-start
-                         ,(gen-dif n :scale  (/ (sqrt (float n 1d0)))
+                         ,(gen-dif n :scale  (/ (sqrt (float n 1.0)))
                                      :window (and window 'window)))))
         (twiddle (make-twiddle n)))
     (lambda (vec window)
@@ -137,9 +137,9 @@
                                         window)
                                   (type index start window-start))
                          twiddle window window-start
-                         ,(gen-dit n :scale  (/ (sqrt (float n 1d0)))
+                         ,(gen-dit n :scale  (/ (sqrt (float n 1.0)))
                                      :window (and window 'window)))))
-        (twiddle (make-twiddle n -1d0)))
+        (twiddle (make-twiddle n -1.0)))
     (lambda (vec window)
       (funcall fun vec 0 window 0 twiddle))))
 
@@ -148,7 +148,7 @@
       (get-windowed-fft n 'float
                         :scale :sqrt
                         :in-order *fancy-in-order*)
-      (let ((fun (get-fancy-fwd n (/ (sqrt (float n 1d0))))))
+      (let ((fun (get-fancy-fwd n (/ (sqrt (float n 1.0))))))
         (lambda (vec window)
           window
           (funcall fun vec)))))
@@ -166,7 +166,7 @@
               (funcall fun vec window))
             fun))
       
-      (let ((fun (get-fancy-inv n (/ (sqrt (float n 1d0))))))
+      (let ((fun (get-fancy-inv n (/ (sqrt (float n 1.0))))))
         (lambda (vec window)
           window
           (funcall fun vec)))))
@@ -226,10 +226,10 @@
                             (type real-sample-array
                                   window)
                             (type index start window-start))
-                   (let ((twiddle ,(make-twiddle n -1d0)))
+                   (let ((twiddle ,(make-twiddle n -1.0)))
                      twiddle
                      ,(gen-dit n :window 'window))))))
-        (diff 0d0))
+        (diff 0.0))
     (dolist (fun funs diff)
       (let* ((window (make-dummy-window n))
              (offset-window (make-array (+ n 7)

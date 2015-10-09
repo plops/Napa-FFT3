@@ -38,8 +38,8 @@
         (f[r] (make-vector size))
         (a    (make-vector size))
         (diff (make-vector size)))
-    (setf (aref r 0) (complex 1d0 0d0))
-    (fill f[r] (complex 1d0 0d0))
+    (setf (aref r 0) (complex 1.0 0.0))
+    (fill f[r] (complex 1.0 0.0))
     (loop repeat repeat do
       (random-vector size a)
       (m- r a diff)
@@ -65,7 +65,7 @@
         (y2 (make-vector size)))
     (loop repeat outer-repeat do
       (random-vector size a)
-      (setf (aref a (1- size)) (complex 0d0 0d0))
+      (setf (aref a (1- size)) (complex 0.0 0.0))
       (replace y1 a)
       (funcall function y1)
       (loop repeat inner-repeat do
@@ -92,8 +92,8 @@
             (y2 (if *bit-reversed*
                     (slow-bit-reverse y2)
                     y2))
-            (root (exp (* -2 pi (complex 0 1d0) (/ size))))
-            (mul (complex 1d0 0d0)))
+            (root (exp (* -2 (coerce pi 'single-float) (complex 0 1.0) (/ size))))
+            (mul (complex 1.0 0.0)))
         (declare (type complex-sample root mul)
                  (type complex-sample-array y1 y2))
         (dotimes (i size)
@@ -104,10 +104,10 @@
                        (slow-bit-reverse y2))
             (check-eqv y1 y2))))))
 
-(defun forward-test (size &key (prob 1d-5)
+(defun forward-test (size &key (prob 1f-5)
                             (maker 'make-forward-fun)
                             ((:bit-reversed *bit-reversed*) t))
-  (let ((repeat (ceiling (log (/ 2d0 prob) 2d0)))
+  (let ((repeat (ceiling (log (/ 2.0 prob) 2.0)))
         (fun    (funcall maker size)))
     (assert (plusp repeat))
     (%forward-test-1 size repeat fun)
