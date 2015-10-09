@@ -39,13 +39,13 @@
                      ((1 :fwd) 1)
                      ((-1 :inv :bwd) -1)))
         (scaling   (ecase scaling
-                     ((nil 1)   1d0)
-                     ((t :inv)  (/ 1d0 n))
+                     ((nil 1)   1.0)
+                     ((t :inv)  (/ 1.0 n))
                      ((sqrt :sqrt)
                       (if (eql direction 1)
-                          (/ (sqrt (float n 1d0)))
-                          (/ 1d0 (float n 1d0)
-                             (/ (sqrt (float n 1d0))))))))
+                          (/ (sqrt (float n 1.0)))
+                          (/ 1.0 (float n 1.0)
+                             (/ (sqrt (float n 1.0))))))))
         (windowing (ecase windowing
                      ((nil) nil)
                      ((float real-sample) 'real-sample)
@@ -98,7 +98,7 @@
 
 (defvar *bit-reverse-lock* (sb-thread:make-mutex))
 (defvar *bit-reverses* (make-array 33 :initial-element nil))
-(defvar *double-bit-reverses* (make-array 33 :initial-element nil))
+(defvar *real-bit-reverses* (make-array 33 :initial-element nil))
 
 (defun %ensure-reverse (n &optional (eltype 'complex-sample))
   (assert (member eltype '(complex-sample real-sample)))
@@ -106,7 +106,7 @@
   (let ((len (lb n))
         (vec (ecase eltype
                (complex-sample *bit-reverses*)
-               (real-sample    *double-bit-reverses*))))
+               (real-sample    *real-bit-reverses*))))
     (block nil
       (flet ((check ()
                (let ((id (aref vec len)))

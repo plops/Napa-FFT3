@@ -14,18 +14,18 @@
   #+ (and sbcl complex-float-vops)
   (sb-vm::swap-complex (conjugate x))
   #- (and sbcl complex-float-vops)
-  (* x #c(0 1d0)))
+  (* x #c(0 1.0)))
 
 (define-inline-function mul-i (x)
   (declare (type complex-sample x))
   #+ (and sbcl complex-float-vops)
   (conjugate (sb-vm::swap-complex x))
   #- (and sbcl complex-float-vops)
-  (* x #c(0 -1d0)))
+  (* x #c(0 -1.0)))
 
 (define-inline-function mul+/-sqrt+i (x scale)
   (declare (type complex-sample x)
-           (type double-float scale))
+           (type single-float scale))
   #+ (and sbcl complex-float-vops)
   (let ((x (* x scale)))
     (+ x (sb-vm::swap-complex (conjugate x))))
@@ -34,7 +34,7 @@
 
 (define-inline-function mul+/-sqrt-i (x scale)
   (declare (type complex-sample x)
-           (type double-float scale))
+           (type single-float scale))
   #+ (and sbcl complex-float-vops)
   (let ((x (* x scale)))
     (- x (sb-vm::swap-complex (conjugate x))))
@@ -43,11 +43,11 @@
 
 (define-inline-function %scale (x scale)
   (declare (type complex-sample x)
-           (type double-float scale)
+           (type single-float scale)
            (muffle-conditions sb-ext:code-deletion-note))
   (case scale
-    (1d0 x)
-    (-1d0 (- x))
+    (1.0 x)
+    (-1.0 (- x))
     (t  (* x scale))))
 
 (define-inline-function %window (x window i)
@@ -73,14 +73,14 @@
      `(mul+/-sqrt+i
        ,x
        ,(case root
-          (1/8 (/ (sqrt 2d0) 2d0))
-          (5/8 (- (/ (sqrt 2d0) 2d0))))))
+          (1/8 (/ (sqrt 2.0) 2.0))
+          (5/8 (- (/ (sqrt 2.0) 2.0))))))
     ((3/8 7/8)
      `(mul+/-sqrt-i
        ,x
        ,(case root
-          (3/8 (- (/ (sqrt 2d0) 2d0)))
-          (7/8 (/ (sqrt 2d0) 2d0)))))
+          (3/8 (- (/ (sqrt 2.0) 2.0)))
+          (7/8 (/ (sqrt 2.0) 2.0)))))
     (t
      (assert default)
      `(* ,x ,default))))

@@ -66,7 +66,7 @@
       (when (vval-p value)
         (pushnew i (vval-dests value))))))
 
-(defmacro with-vector ((n &key (type '(complex double-float))
+(defmacro with-vector ((n &key (type '(complex single-float))
                             (maxlive 14))
                        &body body)
   `(let* ((*vector* (make-array ,n))

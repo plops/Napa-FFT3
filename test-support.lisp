@@ -2,8 +2,8 @@
 
 (defun impulse (i n)
   (let ((vec (make-array n :element-type 'complex-sample
-                           :initial-element (complex 0d0 0d0))))
-    (setf (aref vec i) (complex 1d0 0d0))
+                           :initial-element (complex 0.0 0.0))))
+    (setf (aref vec i) (complex 1.0 0.0))
     vec))
 
 (defun iota (n)
@@ -11,7 +11,7 @@
     (map-into (make-array n :element-type 'complex-sample)
               (lambda ()
                 (complex (1- (incf count))
-                         1d0)))))
+                         1.0)))))
 
 (defun make-vector (n)
   (make-array n :element-type 'complex-sample))
@@ -21,8 +21,8 @@
   (unless (= n (length dst))
     (setf dst (make-array n :element-type 'complex-sample)))
   (map-into dst (lambda ()
-                  (complex (- (random 2d0) 1d0)
-                           (- (random 2d0) 1d0)))))
+                  (complex (- (random 2.0) 1.0)
+                           (- (random 2.0) 1.0)))))
 
 (macrolet ((define-mfun (name op)
              `(defun ,name (x y &optional (dst (make-vector (length x))))
@@ -32,13 +32,13 @@
   (define-mfun m- -)
   (define-mfun m* *))
 
-(defvar *default-abs-tol* 1d-6)
+(defvar *default-abs-tol* 1f-6)
 
 (defun m= (x y &optional (tol *default-abs-tol*))
   (declare (type complex-sample-array x y)
-           (type double-float tol))
-  (let ((worst 0d0))
-    (declare (type double-float worst))
+           (type single-float tol))
+  (let ((worst 0.0))
+    (declare (type single-float worst))
     (dotimes (i (length x))
       (let ((x (aref x i))
             (y (aref y i)))

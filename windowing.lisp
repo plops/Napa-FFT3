@@ -7,15 +7,15 @@
   (declare (ignore i n))
   1.0f0)
 
-(defun hann (i n) (* 0.5 (- 1.0 (cos (/ (* 2 pi i) (1- n))))))
+(defun hann (i n) (* 0.5 (- 1.0 (cos (/ (* 2 (coerce pi 'single-float) i) (1- n))))))
 
 (defun blackman* (alpha i n)
   (let ((a0 (/ (- 1 alpha) 2))
         (a1 0.5)
         (a2 (/ alpha 2)))
     (+ a0 
-       (- (* a1 (cos (/ (* 2 pi i) (1- n))))) 
-       (* a2 (cos (/ (* 4 pi i) (1- n)))))))
+       (- (* a1 (cos (/ (* 2 (coerce pi 'single-float) i) (1- n))))) 
+       (* a2 (cos (/ (* 4 (coerce pi 'single-float) i) (1- n)))))))
 
 (defun blackman (i n) (blackman* 0.16 i n))
 
@@ -44,7 +44,7 @@
                    (gauss* sigma i n)))))))
 
 (defun cosine-series (i n a0 a1 a2 a3)
-  (flet ((f (scale x) (* scale (cos (/ (* x pi i) (1- n))))))
+  (flet ((f (scale x) (* scale (cos (/ (* x (coerce pi 'single-float) i) (1- n))))))
     (+ a0 (- (f a1 2)) (f a2 4) (- (f a3 6)))))
 
 (defun blackman-harris (i n)
@@ -57,12 +57,12 @@
     (let ((key (list function n bit-reverse)))
       (or (gethash key cache)
           (setf (gethash key cache)
-                (let ((v (make-sequence '(simple-array double-float (*)) n)))
+                (let ((v (make-sequence '(simple-array single-float (*)) n)))
                   (dotimes (i n (if bit-reverse
                                     (bit-reverse v v)
                                     v))
                     (setf (aref v i) 
-                          (float (funcall function i n) 0.0d0)))))))))
+                          (float (funcall function i n) 0.0)))))))))
 
 (defun clip-in-window (x start end) (max start (min x end)))
 

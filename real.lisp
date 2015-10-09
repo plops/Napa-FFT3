@@ -22,8 +22,8 @@
                     (xs  (swap x))
                     (y   (aref vec (- n/2 i)))
                     (ys  (swap y))
-                    (xj  (* .5d0 (+ (conjugate xs) ys)))
-                    (-xj (* .5d0 (+ (conjugate ys) xs))))
+                    (xj  (* .5 (+ (conjugate xs) ys)))
+                    (-xj (* .5 (+ (conjugate ys) xs))))
                (setf (aref vec j)          xj
                      (aref vec (- size i)) -xj
                      (aref vec i)          (- x (napa-fft.gen::mul+i xj))
@@ -54,9 +54,9 @@
   (let* ((n/2     (truncate n 2))
          (twiddle (make-array n/2 :element-type 'complex-sample)))
     (let ((root (if (plusp direction)
-                    (complex 1d0 0d0)
-                    (complex 0d0 1d0)))
-          (mul  (exp (* -2 pi (complex 0d0 direction) (/ 1d0 n)))))
+                    (complex 1.0 0.0)
+                    (complex 0.0 1.0)))
+          (mul  (exp (* -2 (coerce pi 'single-float) (complex 0.0 direction) (/ 1.0 n)))))
       (declare (type complex-sample root mul))
       (loop for k below n/2 do
             (setf (aref twiddle k) root
@@ -65,13 +65,13 @@
 
 (defun get-radix-2-twiddle (n direction)
   (assert (power-of-two-p n))
-  (assert (member direction '(-1d0 1d0)))
+  (assert (member direction '(-1.0 1.0)))
   (let ((twiddles (ecase direction
-                    (1d0
+                    (1.0
                      (or *rfft-twiddles*
                          (setf *rfft-twiddles*
                                (make-array 32 :initial-element nil))))
-                    (-1d0
+                    (-1.0
                      (or *rifft-twiddles*
                          (setf *rifft-twiddles*
                                (make-array 32 :initial-element nil))))))
@@ -89,12 +89,12 @@
         ,@body))
      ((t :inv)
       (flet ((scale (x)
-               (* x .5d0)))
+               (* x .5)))
         (declare (inline scale))
         ,@body))
      ((:sqrt sqrt)
       (flet ((scale (x)
-               (* x ,(/ (sqrt 2d0)))))
+               (* x ,(/ (sqrt 2.0)))))
         (declare (inline scale))
         ,@body))))
 
@@ -113,7 +113,7 @@
            (n/2 (truncate n 2))
            (dst (or dst
                     (make-array n :element-type 'complex-sample)))
-           (twiddle (get-radix-2-twiddle n 1d0)))
+           (twiddle (get-radix-2-twiddle n 1.0)))
       (declare (type complex-sample-array twiddle)
                (type complex-sample-array dst))
       (assert (>= (length dst) size))
@@ -160,9 +160,9 @@
     (assert (power-of-two-p size))
     (let* ((n   size)
            (n/2 (truncate n 2))
-           (twiddle (get-radix-2-twiddle n -1d0))
+           (twiddle (get-radix-2-twiddle n -1.0))
            (dst (or dst
-                    (make-array n :element-type 'double-float))))
+                    (make-array n :element-type 'single-float))))
       (declare (type complex-sample-array twiddle)
                (type real-sample-array dst))
       (assert (>= (length dst) size))

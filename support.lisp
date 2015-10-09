@@ -14,13 +14,13 @@
   `(and (integer 1) half-index))
 
 (deftype complex-sample ()
-  `(complex double-float))
+  `(complex single-float))
 
 (deftype complex-sample-array (&optional size)
   `(simple-array complex-sample (,size)))
 
 (deftype real-sample ()
-  'double-float)
+  'single-float)
 
 (deftype real-sample-array (&optional size)
   `(simple-array real-sample (,size)))
@@ -37,15 +37,15 @@
 
 (defconstant +twiddle-offset+ -1)
 
-(defun make-twiddle (n &optional (dir 1d0))
+(defun make-twiddle (n &optional (dir 1.0))
   (assert (power-of-two-p n))
-  (check-type dir (member 1d0 -1d0))
+  (check-type dir (member 1.0 -1.0))
   (let ((vec (make-array n :element-type 'complex-sample
-                           :initial-element (complex 0d0 0d0))))
+                           :initial-element (complex 0.0 0.0))))
     (loop for size = 4 then (* 2 size)
           while (<= size n)
           do (let ((start (+ (truncate size 2) +twiddle-offset+))
-                   (base  (/ (* dir 2 pi) size)))
+                   (base  (/ (* dir 2 (coerce pi 'single-float)) size)))
                (dotimes (i (truncate size 4))
                  (let* ((theta (* -1 i base))
                         (t1 (cis theta))

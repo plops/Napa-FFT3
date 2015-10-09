@@ -7,7 +7,7 @@
          (replace dst src))
         (t (copy-seq src))))
 
-(defun %bit-reverse-double (vec dst size)
+(defun %bit-reverse-real (vec dst size)
   (declare (type real-sample-array vec)
            (type (or null real-sample-array) dst)
            (type index size))
@@ -34,7 +34,7 @@
     (complex-sample-array
      (%bit-reverse-complex vec dst size))
     (real-sample-array
-     (%bit-reverse-double vec dst size))))
+     (%bit-reverse-real vec dst size))))
 
 (defun get-window-type (window)
   (etypecase window
